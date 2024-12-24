@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Motor Land — Каталог</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ШАПКА -->
+<header>
+  <div class="header-inner">
+        <div class="logo">
+       <img src="logo.jpg" alt="Логотип Motor Land">
+    </div>
+    <!-- МЕНЮ -->
+    <nav>
+      <ul>
+        <li><a href="#">ГЛАВНАЯ</a></li>
+        <li><a href="#">КАТАЛОГ</a></li>
+        <li><a href="#">СЕРВИС</a></li>
+        <li><a href="#">ОПЛАТА / ДОСТАВКА</a></li>
+        <li><a href="#">ГАРАНТИИ</a></li>
+        <li><a href="#">КОНТАКТЫ</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ПОИСК -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Введите название, марку или описание..." />
+    <button id="searchBtn">Найти</button>
+  </div>
+
+<!-- КАТАЛОГ (карточки) -->
+<div class="cards-container"
+ id="cardsContainer"></div>
+
+<!-- ПОКАЗАТЬ ЕЩЁ -->
+<div class="show-more-wrapper">
+  <button class="show-more-btn" id="showMoreBtn">Показать ещё</button>
+</div>
+
+<!-- О НАС (перемещённый блок) -->
+<div class="about-section">
+  <img src="moto.jpeg" alt="О нас" />
+  <div class="about-content">
+    <h2>О НАС</h2>
+    <p>Компания «Motor Land» занимается поставкой запчастей на автомобили японского производства. Основным направлением деятельности нашей компании является поставка контрактных б/у двигателей (бензин/дизель) и других автозапчастей.</p>
+    <p>На нашем складе всегда более 1000 наименований запчастей. Мы напрямую сотрудничаем с крупнейшими поставщиками в Японии, избегая цепочки посредников — а значит, наши клиенты не переплачивают за товары.</p>
+  </div>
+</div>
+
+
+<!-- ПОДВАЛ -->
+<footer>
+  <div class="footer-inner">
+    <div class="callback-form">
+      <h3>Закажите обратный звонок</h3>
+      <input class="footer-input" type="text" placeholder="Имя" />
+      <input class="footer-input" type="text" placeholder="Телефон" />
+      <button>Отправить</button>
+    </div>
+    <div class="contacts">
+      <h4>Контакты</h4>
+      <p>Республика Казахстан, г. Алматы</p>
+      <p>Тел.: +7 777 144 5445</p>
+      <p>Тел.: +7 707 144 5445</p>
+      <p>График: Пн-Пт с 9:00 до 18:00</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+
+
+
+
+const originalData = [
+  { year: "2001-2005", brand: "BMW", model: "7-series (N62 B36)", price: "Не указана" },
+  { year: "2002-2006", brand: "BMW", model: "7-series (N62 B44)", price: "Не указана" },
+  { year: "2005-2010", brand: "BMW", model: "5-series,7-series,6-series,5-series,X5 (N62 B48)", price: "Не указана" },
+  { year: "2012-2015", brand: "Chevrolet", model: "Cruze,Orlando (F18D4)", price: "Не указана" },
+  { year: "N/A", brand: "Hyundai", model: "G6BA", price: "Не указана" },
+  { year: "2002-2006", brand: "Infiniti", model: "FX35,EX35 (VQ35)", price: "Не указана" },
+  { year: "N/A", brand: "Infiniti", model: "VQ35 HR", price: "Не указана" },
+  { year: "2005-2010", brand: "Mazda", model: "Mazda 3,CX-7 (L3 VDT 2.3 TURBO)", price: "Не указана" },
+  { year: "2003-2009", brand: "Mazda", model: "Mazda 3,2 (Mazda ZJ)", price: "Не указана" },
+  { year: "2006-2013", brand: "Mini", model: "EP-6", price: "Не указана" },
+  { year: "1994-1998", brand: "Mitsubishi", model: "Pajero,Montero,Delica (6G72 12v)", price: "Не указана" },
+  { year: "1996-2003", brand: "Mitsubishi", model: "Pajero,Montero,Delica,Challenger (6G72 24V)", price: "Не указана" },
+  { year: "N/A", brand: "Mitsubishi", model: "6G72 NEW", price: "Не указана" },
+  { year: "N/A", brand: "Mitsubishi", model: "6G74 NEW", price: "Не указана" },
+  { year: "N/A", brand: "Mitsubishi", model: "Y72", price: "Не указана" },
+  { year: "2006-2013", brand: "Nissan", model: "Qashqai (MR20)", price: "Не указана" },
+  { year: "1999-2004", brand: "Nissan", model: "VQ35 DE", price: "Не указана" },
+  { year: "2006-2012", brand: "Nissan", model: "VQ40 DE", price: "Не указана" },
+  { year: "2011-2017", brand: "Renault", model: "K4M", price: "Не указана" },
+  { year: "1990-1996", brand: "Subaru", model: "Legacy,Impreza (EJ 18)", price: "Не указана" },
+  { year: "1992-1998", brand: "Subaru", model: "Impreza,Legacy,Outback,Forester (EJ 20)", price: "Не указана" },
+  { year: "1998-2002", brand: "Subaru", model: "Impreza,Legacy,Forester (EJ 201)", price: "Не указана" },
+  { year: "2003-2007", brand: "Subaru", model: "Impreza,Legacy,Forester (EJ 203)", price: "Не указана" },
+  { year: "2004-2008", brand: "Subaru", model: "Legacy (EJ 204)", price: "Не указана" },
+  { year: "2009-2012", brand: "Subaru", model: "Impreza,Legacy,Forester (EJ 204 NEW)", price: "Не указана" },
+  { year: "1998-2001", brand: "Subaru", model: "Impreza,Legacy,Forester (EJ 205)", price: "Не указана" },
+  { year: "2002-2007", brand: "Subaru", model: "Legacy,Forester (EJ 205 AVCS)", price: "Не указана" },
+  { year: "1999-2003", brand: "Subaru", model: "Legacy (EJ 206)", price: "Не указана" },
+  { year: "1999-2003", brand: "Subaru", model: "Legacy (EJ 208)", price: "Не указана" },
+  { year: "2004-2008", brand: "Subaru", model: "Legacy (EJ 20X)", price: "Не указана" },
+  { year: "2004-2008", brand: "Subaru", model: "Legacy (EJ 20Y)", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ 22", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ 251", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ 253", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ 253 AVCS", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ 254 AVCS", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ 25D", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ20G", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ20J", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EL 15", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EZ 30", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EZ 30 AVCS", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EZ 36 AVCS", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "FB 20", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "FB 25", price: "Не указана" },
+  { year: "N/A", brand: "Suzuki", model: "H25A", price: "Не указана" },
+  { year: "N/A", brand: "Suzuki", model: "H27A NEW", price: "Не указана" },
+  { year: "N/A", brand: "Toyota", model: "1 KZ", price: "Не указана" },
+  { year: "N/A", brand: "Toyota", model: "1KD", price: "Не указана" },
+  { year: "N/A", brand: "Toyota", model: "2 KD FTV", price: "Не указана" },
+  { year: "N/A", brand: "Toyota", model: "2GR FSE", price: "Не указана" },
+  { year: "N/A", brand: "Toyota", model: "3GR FSE", price: "Не указана" },
+  { year: "N/A", brand: "Toyota", model: "4GR FSE", price: "Не указана" },
+  { year: "N/A", brand: "Volvo", model: "B6244S", price: "Не указана" },
+  { year: "N/A", brand: "Volvo", model: "B6284T", price: "Не указана" },
+  { year: "N/A", brand: "Volvo", model: "B6294T", price: "Не указана" }
+];
+
+/* Функция извлечения индекса двигателя из скобок, если есть */
+function extractEngineIndex(modelStr) {
+  const match = modelStr.match(/\(([^)]+)\)/);
+  return match ? match[1].trim() : "";
+}
+
+/* Соберём массив "motorsData" для карточек: brand, shortName, desc, image, price */
+function createMotorsArray(orig) {
+  return orig.map(item => {
+    const brand = item.brand.trim();
+    const model = item.model.trim();
+    const year = item.year.trim();
+    const price = "Цена по запросу";
+    // Извлечём индекс из скобок (если есть)
+    const engineIndex = extractEngineIndex(model);
+    // shortName
+    let shortName;
+    if (engineIndex) {
+      shortName = `${brand} - ${engineIndex}`;
+    } else {
+      shortName = `${brand} - ${model}`;
+    }
+    // Описание
+    const desc = `Двигатель для ${model} (${year}). Надёжный вариант!`;
+    // Простая заглушка по brand (при желании — сделать для каждого уникальную)
+    const image = placeholderByBrand(brand);
+
+    return {
+      brand,
+      shortName,
+      desc,
+      price,
+      image
+    };
+  });
+}
+
+/* Заглушки под разные бренды */
+function placeholderByBrand(brand) {
+  const b = brand.toLowerCase();
+  if (b === "bmw")        return "https://via.placeholder.com/240x160/000000/ffffff?text=BMW";
+  if (b === "subaru")     return "https://via.placeholder.com/240x160/555555/ffffff?text=SUBARU";
+  if (b === "toyota")     return "https://via.placeholder.com/240x160/cccfff/000000?text=TOYOTA";
+  if (b === "infiniti")   return "https://via.placeholder.com/240x160/999999/000000?text=INFINITI";
+  if (b === "mitsubishi") return "https://via.placeholder.com/240x160/555555/ffffff?text=MITSUBISHI";
+  if (b === "mazda")      return "https://via.placeholder.com/240x160/aaaaff/000000?text=MAZDA";
+  if (b === "nissan")     return "https://via.placeholder.com/240x160/ccccff/000000?text=NISSAN";
+  if (b === "chevrolet")  return "https://via.placeholder.com/240x160/87ceeb/000000?text=CHEVROLET";
+  if (b === "hyundai")    return "https://via.placeholder.com/240x160/90ee90/000000?text=HYUNDAI";
+  if (b === "mini")       return "https://via.placeholder.com/240x160/222222/ffffff?text=MINI";
+  if (b === "renault")    return "https://via.placeholder.com/240x160/ffd700/000000?text=RENAULT";
+  if (b === "suzuki")     return "https://via.placeholder.com/240x160/333333/ffffff?text=SUZUKI";
+  if (b === "volvo")      return "https://via.placeholder.com/240x160/aaaaaa/000000?text=VOLVO";
+  // И т.д., если нужно...
+  return "https://via.placeholder.com/240x160/cccccc/000000?text=ENGINE";
+}
+
+const motorsData = createMotorsArray(originalData);
+
+/* Теперь реализуем логику рендера и поиска */
+let visibleCount = 8; // сколько карточек показывать сначала
+
+const cardsContainer = document.getElementById('cardsContainer');
+const showMoreBtn    = document.getElementById('showMoreBtn');
+const searchInput    = document.getElementById('searchInput');
+const searchBtn      = document.getElementById('searchBtn');
+
+/* Функция отрисовки (dataArray, limit) */
+function renderCards(dataArray, limit = dataArray.length) {
+  cardsContainer.innerHTML = '';
+  
+  const toShow = dataArray.slice(0, limit);
+  toShow.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'engine-card';
+    card.innerHTML = `
+      <img class="engine-img" src="${item.image}" alt="${item.shortName}" />
+      <div class="engine-content">
+        <div class="engine-title">${item.shortName}</div>
+        <div class="engine-desc">${item.desc}</div>
+        <div class="engine-price">${item.price}</div>
+        <button class="buy-btn">Купить</button>
+      </div>
+    `;
+    cardsContainer.appendChild(card);
+  });
+
+  if (limit >= dataArray.length) {
+    showMoreBtn.style.display = 'none';
+  } else {
+    showMoreBtn.style.display = 'inline-block';
+  }
+}
+
+/* Стартовая отрисовка */
+renderCards(motorsData, visibleCount);
+
+/* «Показать ещё» */
+showMoreBtn.addEventListener('click', () => {
+  visibleCount += 4; 
+  renderCards(motorsData, visibleCount);
+});
+
+/* Поиск по brand, shortName, desc */
+function handleSearch() {
+  const query = searchInput.value.trim().toLowerCase();
+  if (!query) {
+    visibleCount = 8;
+    renderCards(motorsData, visibleCount);
+    return;
+  }
+  const filtered = motorsData.filter(item => {
+    const b = item.brand.toLowerCase();
+    const s = item.shortName.toLowerCase();
+    const d = item.desc.toLowerCase();
+    return b.includes(query) || s.includes(query) || d.includes(query);
+  });
+  renderCards(filtered, filtered.length);
+}
+
+/* Поиск: кнопка «Найти» и Enter в инпуте */
+searchBtn.addEventListener('click', handleSearch);
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleSearch();
+});
+</script>
+
+</body>
+</html>
+
+

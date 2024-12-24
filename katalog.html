@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Каталог всех двигателей</title>
+  <style>
+    /* Сброс базовых стилей */
+    * {
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #f0f0f0, #d9d9d9);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Заголовок */
+    h1 {
+      text-align: center;
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: #333;
+    }
+
+    /* Поисковая панель */
+    .search-bar {
+      width: 90%;
+      max-width: 900px;
+      margin: 0 auto 1.5rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+    }
+    .search-bar input {
+      flex: 1;
+      font-size: 1.1rem;
+      padding: 0.7rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      outline: none;
+      transition: box-shadow 0.2s;
+    }
+    .search-bar input:focus {
+      box-shadow: 0 0 6px rgba(0, 123, 255, 0.5);
+    }
+    .search-bar button {
+      background-color: #007bff;
+      color: #fff;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 6px;
+      padding: 0.7rem 1.2rem;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .search-bar button:hover {
+      background-color: #005bb5;
+    }
+
+    /* Контейнер каталога */
+    .catalog {
+      width: 90%;
+      max-width: 1400px;
+      margin: 0 auto 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      justify-content: center;
+    }
+
+    /* Карточка двигателя */
+    .engine-card {
+      background-color: #fff;
+      width: 300px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .engine-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+
+    /* Изображение */
+    .engine-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Контент */
+    .engine-card-content {
+      padding: 1rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .engine-card-content h2 {
+      font-size: 1rem;
+      color: red; /* Название мотора красным */
+      text-transform: uppercase;
+    }
+    .engine-card-content p {
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: #333;
+    }
+    .engine-year {
+      font-weight: bold;
+    }
+    .engine-price {
+      color: red;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Кнопка купить */
+    .buy-btn {
+      background-color: #000;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      transition: background-color 0.3s;
+      align-self: center;
+    }
+    .buy-btn:hover {
+      background-color: #333;
+    }
+
+    /* Если нет результатов */
+    .no-results {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #666;
+      margin-top: 2rem;
+    }
+
+    /* Модалка (опционально) */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background-color: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 9999;
+    }
+    .modal-backdrop.show {
+      display: flex;
+      opacity: 1;
+    }
+    .modal {
+      background-color: #fff;
+      border-radius: 6px;
+      padding: 1.5rem;
+      width: 350px;
+      max-width: 90%;
+      text-align: center;
+      position: relative;
+      transform: scale(0.8);
+      transition: transform 0.3s;
+    }
+    .modal-backdrop.show .modal {
+      transform: scale(1);
+    }
+    .modal h3 {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    .modal input {
+      width: 80%;
+      margin-bottom: 1rem;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .modal button {
+      background-color: red;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .modal button:hover {
+      background-color: #cc0000;
+    }
+    .close-modal {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.8rem;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: #888;
+      transition: color 0.2s;
+    }
+    .close-modal:hover {
+      color: #444;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Каталог всех двигателей</h1>
+
+<!-- Поисковая панель -->
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Введите название, марку или описание..." />
+  <button id="searchBtn">Найти</button>
+</div>
+
+<!-- Контейнер для карточек -->
+<div class="catalog" id="catalogContainer"></div>
+
+<div class="no-results" id="noResults" style="display: none;">
+  Ничего не найдено...
+</div>
+
+<!-- Модальное окно -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal">
+    <div class="close-modal" id="closeModal">×</div>
+    <h3 id="modalTitle">Оформить заказ</h3>
+    <input type="text" placeholder="Ваше имя..." />
+    <input type="text" placeholder="Ваш телефон..." />
+    <button id="orderBtn">Заказать</button>
+  </div>
+</div>
+
+<script>
+/*
+  Все двигатели из переписки.
+  Для каждого:
+    - brand  (как в исходной записи)
+    - model  (исходная строка, возможно с несколькими моделями и/или скобками)
+    - year   (как есть: "2001-2005" или "N/A")
+    - shortName: "BMW - N62 B48" (если в model есть скобки "(...)", берём оттуда)
+    - desc: "Контрактный двигатель... для {model}" (пример)
+    - price: "Цена по запросу"
+    - image: placeholder по бренду (или общая заглушка)
+*/
+
+/* 1) Исходный массив */
+const originalData = [
+  { year: "2001-2005", brand: "BMW", model: "7-series (N62 B36)", price: "Не указана" },
+  { year: "2002-2006", brand: "BMW", model: "7-series (N62 B44)", price: "Не указана" },
+  { year: "2005-2010", brand: "BMW", model: "5-series,7-series,6-series,5-series,X5 (N62 B48)", price: "Не указана" },
+  { year: "2012-2015", brand: "Chevrolet", model: "Cruze,Orlando (F18D4)", price: "Не указана" },
+  { year: "N/A", brand: "Hyundai", model: "G6BA", price: "Не указана" },
+  { year: "2002-2006", brand: "Infiniti", model: "FX35,EX35 (VQ35)", price: "Не указана" },
+  { year: "N/A", brand: "Infiniti", model: "VQ35 HR", price: "Не указана" },
+  { year: "2005-2010", brand: "Mazda", model: "Mazda 3,CX-7 (L3 VDT 2.3 TURBO)", price: "Не указана" },
+  { year: "2003-2009", brand: "Mazda", model: "Mazda 3,2 (Mazda ZJ)", price: "Не указана" },
+  { year: "2006-2013", brand: "Mini", model: "EP-6", price: "Не указана" },
+  { year: "1994-1998", brand: "Mitsubishi", model: "Pajero,Montero,Delica (6G72 12v)", price: "Не указана" },
+  { year: "1996-2003", brand: "Mitsubishi", model: "Pajero,Montero,Delica,Challenger (6G72 24V)", price: "Не указана" },
+  { year: "N/A", brand: "Mitsubishi", model: "6G72 NEW", price: "Не указана" },
+  { year: "N/A", brand: "Mitsubishi", model: "6G74 NEW", price: "Не указана" },
+  { year: "N/A", brand: "Mitsubishi", model: "Y72", price: "Не указана" },
+  { year: "2006-2013", brand: "Nissan", model: "Qashqai (MR20)", price: "Не указана" },
+  { year: "1999-2004", brand: "Nissan", model: "VQ35 DE", price: "Не указана" },
+  { year: "2006-2012", brand: "Nissan", model: "VQ40 DE", price: "Не указана" },
+  { year: "2011-2017", brand: "Renault", model: "K4M", price: "Не указана" },
+  { year: "1990-1996", brand: "Subaru", model: "Legacy,Impreza (EJ 18)", price: "Не указана" },
+  { year: "1992-1998", brand: "Subaru", model: "Impreza,Legacy,Outback,Forester (EJ 20)", price: "Не указана" },
+  { year: "1998-2002", brand: "Subaru", model: "Impreza,Legacy,Forester (EJ 201)", price: "Не указана" },
+  { year: "2003-2007", brand: "Subaru", model: "Impreza,Legacy,Forester (EJ 203)", price: "Не указана" },
+  { year: "2004-2008", brand: "Subaru", model: "Legacy (EJ 204)", price: "Не указана" },
+  { year: "2009-2012", brand: "Subaru", model: "Impreza,Legacy,Forester (EJ 204 NEW)", price: "Не указана" },
+  { year: "1998-2001", brand: "Subaru", model: "Impreza,Legacy,Forester (EJ 205)", price: "Не указана" },
+  { year: "2002-2007", brand: "Subaru", model: "Legacy,Forester (EJ 205 AVCS)", price: "Не указана" },
+  { year: "1999-2003", brand: "Subaru", model: "Legacy (EJ 206)", price: "Не указана" },
+  { year: "1999-2003", brand: "Subaru", model: "Legacy (EJ 208)", price: "Не указана" },
+  { year: "2004-2008", brand: "Subaru", model: "Legacy (EJ 20X)", price: "Не указана" },
+  { year: "2004-2008", brand: "Subaru", model: "Legacy (EJ 20Y)", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ 22", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ 251", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ 253", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ 253 AVCS", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ 254 AVCS", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ 25D", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ20G", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EJ20J", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EL 15", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EZ 30", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EZ 30 AVCS", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "EZ 36 AVCS", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "FB 20", price: "Не указана" },
+  { year: "N/A", brand: "Subaru", model: "FB 25", price: "Не указана" },
+  { year: "N/A", brand: "Suzuki", model: "H25A", price: "Не указана" },
+  { year: "N/A", brand: "Suzuki", model: "H27A NEW", price: "Не указана" },
+  { year: "N/A", brand: "Toyota", model: "1 KZ", price: "Не указана" },
+  { year: "N/A", brand: "Toyota", model: "1KD", price: "Не указана" },
+  { year: "N/A", brand: "Toyota", model: "2 KD FTV", price: "Не указана" },
+  { year: "N/A", brand: "Toyota", model: "2GR FSE", price: "Не указана" },
+  { year: "N/A", brand: "Toyota", model: "3GR FSE", price: "Не указана" },
+  { year: "N/A", brand: "Toyota", model: "4GR FSE", price: "Не указана" },
+  { year: "N/A", brand: "Volvo", model: "B6244S", price: "Не указана" },
+  { year: "N/A", brand: "Volvo", model: "B6284T", price: "Не указана" },
+  { year: "N/A", brand: "Volvo", model: "B6294T", price: "Не указана" }
+];
+
+/* 2) Функция для преобразования originalData → готовый объект:
+   {
+     brand: ...,
+     shortName: "Subaru - EJ20"  (если в model есть (EJ 20)), 
+     year: ...,
+     desc: "Контрактный двигатель... для model",
+     image: "заглушка",
+     price: "Цена по запросу"
+   }
+*/
+function makeShortName(brand, model) {
+  // Ищем строку в скобках
+  // Например: "Impreza,Legacy (EJ 20)" -> "EJ 20"
+  const match = model.match(/\(([^)]+)\)/);
+  if (match) {
+    return `${brand} - ${match[1].trim()}`;
+  }
+  // Если нет скобок, возьмём сам model (или часть)
+  return `${brand} - ${model}`.replace(/\s+/g, ' ');
+}
+
+function getImagePlaceholder(brand) {
+  // Для разнообразия можно сделать «брендовые» цвета
+  // или просто одну заглушку:
+  // return "https://via.placeholder.com/300x180/aaa/000?text=" + encodeURIComponent(brand)
+  // но сделаем небольшую мапу
+  const brandLower = brand.toLowerCase();
+  if (brandLower === 'bmw')        return "https://via.placeholder.com/300x180/0000ff/ffffff?text=BMW";
+  if (brandLower === 'subaru')     return "https://via.placeholder.com/300x180/555555/ffffff?text=SUBARU";
+  if (brandLower === 'toyota')     return "https://via.placeholder.com/300x180/ffff99/000000?text=TOYOTA";
+  if (brandLower === 'infiniti')   return "https://via.placeholder.com/300x180/ffcccc/000000?text=INFINITI";
+  if (brandLower === 'nissan')     return "https://via.placeholder.com/300x180/ccccff/000000?text=NISSAN";
+  if (brandLower === 'mitsubishi') return "https://via.placeholder.com/300x180/ffc0cb/000000?text=MITSUBISHI";
+  if (brandLower === 'volvo')      return "https://via.placeholder.com/300x180/aaaaaa/000000?text=VOLVO";
+  if (brandLower === 'mazda')      return "https://via.placeholder.com/300x180/aaaaff/000000?text=MAZDA";
+  if (brandLower === 'renault')    return "https://via.placeholder.com/300x180/ffd700/000000?text=RENAULT";
+  if (brandLower === 'mini')       return "https://via.placeholder.com/300x180/999999/000000?text=MINI";
+  if (brandLower === 'suzuki')     return "https://via.placeholder.com/300x180/333333/ffffff?text=SUZUKI";
+  if (brandLower === 'chevrolet')  return "https://via.placeholder.com/300x180/87ceeb/000000?text=CHEVROLET";
+  if (brandLower === 'hyundai')    return "https://via.placeholder.com/300x180/90ee90/000000?text=HYUNDAI";
+  // по умолчанию
+  return "https://via.placeholder.com/300x180/cccccc/000000?text=ENGINE";
+}
+
+// Собираем массив для каталога
+let motorsData = originalData.map(item => {
+  const brand     = item.brand.trim();
+  const model     = item.model.trim();
+  const shortName = makeShortName(brand, model);
+  const year      = item.year.trim();
+  const desc      = `Контрактный двигатель для ${model}. Надёжный выбор!`;
+  const image     = getImagePlaceholder(brand);
+
+  return {
+    brand,
+    shortName,
+    year,
+    desc,
+    image,
+    price: "Цена по запросу"
+  };
+});
+
+/* DOM-элементы */
+const catalogContainer = document.getElementById('catalogContainer');
+const noResults        = document.getElementById('noResults');
+const searchInput      = document.getElementById('searchInput');
+const searchBtn        = document.getElementById('searchBtn');
+
+/* Модалка */
+const modalBackdrop = document.getElementById('modalBackdrop');
+const modalTitle    = document.getElementById('modalTitle');
+const closeModal    = document.getElementById('closeModal');
+const orderBtn      = document.getElementById('orderBtn');
+
+/* Функция отрисовки карточек */
+function renderCards(dataArray) {
+  catalogContainer.innerHTML = '';
+
+  if (!dataArray.length) {
+    noResults.style.display = 'block';
+    return;
+  }
+  noResults.style.display = 'none';
+
+  dataArray.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'engine-card';
+
+    card.innerHTML = `
+      <img src="${item.image}" alt="${item.shortName}" />
+      <div class="engine-card-content">
+        <h2>${item.shortName}</h2>
+        <p class="engine-year">Год(ы): ${item.year}</p>
+        <p>${item.desc}</p>
+        <div class="engine-price">${item.price}</div>
+        <button class="buy-btn">Купить</button>
+      </div>
+    `;
+
+    // "Купить" -> открыть модалку
+    const buyBtn = card.querySelector('.buy-btn');
+    buyBtn.addEventListener('click', () => openModal(item));
+    catalogContainer.appendChild(card);
+  });
+}
+
+/* Поиск (по brand, shortName, desc), регистронезависимый */
+function handleSearch() {
+  const query = searchInput.value.trim().toLowerCase();
+  if (!query) {
+    // пусто -> показываем все
+    renderCards(motorsData);
+    return;
+  }
+  const filtered = motorsData.filter(item => {
+    const b = item.brand.toLowerCase();
+    const s = item.shortName.toLowerCase();
+    const d = item.desc.toLowerCase();
+    return b.includes(query) || s.includes(query) || d.includes(query);
+  });
+  renderCards(filtered);
+}
+
+/* Модалка */
+function openModal(motor) {
+  modalTitle.textContent = `Оформить заказ на: ${motor.shortName}`;
+  modalBackdrop.classList.add('show');
+}
+function closeMyModal() {
+  modalBackdrop.classList.remove('show');
+}
+closeModal.addEventListener('click', closeMyModal);
+modalBackdrop.addEventListener('click', e => {
+  if (e.target === modalBackdrop) {
+    closeMyModal();
+  }
+});
+orderBtn.addEventListener('click', () => {
+  alert('Заказ оформлен (демо)!');
+  closeMyModal();
+});
+
+/* События для поиска */
+searchBtn.addEventListener('click', handleSearch);
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    handleSearch();
+  }
+});
+
+/* При загрузке сразу показываем все */
+renderCards(motorsData);
+</script>
+</body>
+</html>
+
